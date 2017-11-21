@@ -65,6 +65,8 @@ public class CommandInterpreter implements Interpreter {
                 return new PrintOrderedStudentsCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             case "dropdb":
                 return new DropDatabaseCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
+            case "display":
+                return new DisplayCommand(line, data, this.tester, this.studentsRepository, this.downloadManager, this.ioManager);
             default:
                 throw new InvalidInputException(line);
         }

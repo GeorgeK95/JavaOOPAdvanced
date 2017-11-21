@@ -4,6 +4,7 @@ import IO.OutputWriter;
 import StaticData.ExceptionMessages;
 import StaticData.SessionData;
 import contracts.*;
+import dataStructures.SimpleSortedList;
 import exceptions.DataAlreadyInitializedException;
 import exceptions.DataNotInitializedException;
 import models.SoftUniCourse;
@@ -12,10 +13,7 @@ import models.SoftUniStudent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,6 +49,20 @@ public class StudentsRepository implements Database, Requester, FilteredTaker, O
         this.students = null;
         this.courses = null;
         this.isDataInitialized = false;
+    }
+
+    @Override
+    public SimpleSortedList<Course> getAllCoursesSorted(Comparator<Course> cmp) {
+        SimpleSortedList<Course> sortedCourses = new SimpleSortedList<>(Course.class, cmp);
+        sortedCourses.addAll(this.courses.values());
+        return sortedCourses;
+    }
+
+    @Override
+    public SimpleSortedList<Student> getAllStudentsSorted(Comparator<Student> cmp) {
+        SimpleSortedList<Student> sortedStudents = new SimpleSortedList<>(Student.class, cmp);
+        sortedStudents.addAll(this.students.values());
+        return sortedStudents;
     }
 
 

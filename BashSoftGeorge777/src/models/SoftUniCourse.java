@@ -44,4 +44,14 @@ public class SoftUniCourse implements Course {
         }
         this.name = name;
     }
+
+    @Override
+    public int compareTo(Course o) {
+        return this.getName().compareTo(o.getName());
+    }
+
+    @Override
+    public String toString() {
+        return this.getName()   ;
+    }
 }

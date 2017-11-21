@@ -41,7 +41,7 @@ public class SoftUniStudent implements Student {
 
     private double calculateMark(int[] scores) {
         double percentageOfSolvedExam = Arrays.stream(scores).sum() /
-                    (double) (Course.NUMBER_OF_TASKS_ON_EXAM * Course.MAX_SCORE_ON_EXAM_TASK);
+                (double) (Course.NUMBER_OF_TASKS_ON_EXAM * Course.MAX_SCORE_ON_EXAM_TASK);
         return percentageOfSolvedExam * 4 + 2;
     }
 
@@ -77,5 +77,15 @@ public class SoftUniStudent implements Student {
 
     public void setMarksByCourse(Map<String, Double> marksByCourse) {
         this.marksByCourse = marksByCourse;
+    }
+
+    @Override
+    public int compareTo(Student o) {
+        return this.getUserName().compareTo(o.getUserName());
+    }
+
+    @Override
+    public String toString() {
+        return this.getUserName();
     }
 }
