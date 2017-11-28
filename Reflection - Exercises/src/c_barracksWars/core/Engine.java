@@ -1,53 +1,45 @@
 package c_barracksWars.core;
 
-
-import c_barracksWars.contracts.Executable;
-import c_barracksWars.contracts.Repository;
-import c_barracksWars.contracts.UnitFactory;
+import c_barracksWars.contracts.*;
+import c_barracksWars.contracts.Runnable;
+import c_barracksWars.core.commands.CommandInterpreter;
+import c_barracksWars.io.ConsoleOutputWriter;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
 
 public class Engine implements Runnable {
-
+    private static final String COMMANDS_PATH = "src/c_barracksWars/core/commands";
     private static final String COMMANDS_PACKAGE = "c_barracksWars.core.commands.";
+
     private Repository repository;
     private UnitFactory unitFactory;
 
-    public  Engine(Repository repository, UnitFactory unitFactory) {
+    private ICommandInterpreter interpreter;
+
+    public Engine(Repository repository, UnitFactory unitFactory) {
         this.repository = repository;
         this.unitFactory = unitFactory;
+        this.interpreter = new CommandInterpreter(repository, unitFactory);
     }
 
     @Override
-    public void run() {
+    public void run() throws IOException {
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(System.in));
+
         while (true) {
-            try {
-                String input = reader.readLine();
-                String[] data = input.split("\\s+");
-                String commandName = data[0];
+            String[] data = reader.readLine().split("\\s+");
+            String commandName = data[0];
+            Executable executable = this.interpreter.interpretCommand(data, commandName);
+            String execute = executable.execute();
+            ConsoleOutputWriter.writeLine(execute);
 
-                char firstLetter = Character.toUpperCase(commandName.charAt(0));
-                String className = COMMANDS_PACKAGE + firstLetter + commandName.substring(1);
-                Constructor<Executable> constructorCommand = (Constructor<Executable>) Class.forName(className)
-                        .getDeclaredConstructor(String[].class, Repository.class, UnitFactory.class);
-                constructorCommand.setAccessible(true);
-                Executable executable = constructorCommand.newInstance(data, repository, unitFactory);
-                String result = executable.execute();
-
-                if (result.equals("fight")) {
-                    break;
-                }
-
-                if (!result.equals("")) {
-                    System.out.println(result);
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+            if (execute.equals("fight")) {
+                break;
             }
         }
+
     }
 }

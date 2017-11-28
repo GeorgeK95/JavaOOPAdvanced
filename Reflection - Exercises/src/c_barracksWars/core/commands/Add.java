@@ -1,5 +1,7 @@
 package c_barracksWars.core.commands;
 
+import c_barracksWars.annotation.Alias;
+import c_barracksWars.annotation.Inject;
 import c_barracksWars.contracts.Repository;
 import c_barracksWars.contracts.Unit;
 import c_barracksWars.contracts.UnitFactory;
@@ -7,14 +9,15 @@ import c_barracksWars.contracts.UnitFactory;
 /**
  * Created by George-Lenovo on 6/29/2017.
  */
+@Alias(value = "add")
 public class Add extends Command {
+    @Inject
     private Repository repository;
+    @Inject
     private UnitFactory unitFactory;
 
-    public Add(String[] data, Repository repository, UnitFactory unitFactory) {
+    public Add(String helperParam, String[] data) {
         super(data);
-        this.repository = repository;
-        this.unitFactory = unitFactory;
     }
 
     @Override

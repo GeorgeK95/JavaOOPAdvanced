@@ -1,15 +1,21 @@
 package IO.commands;
 
+import annotations.Alias;
+import annotations.Inject;
 import contracts.*;
 import exceptions.InvalidInputException;
 
 /**
  * Created by George-Lenovo on 6/29/2017.
  */
+@Alias(value = "downloadasync")
 public class DownloadAsynchCommand extends Command {
 
-    public DownloadAsynchCommand(String line, String[] data, DirectoryManager ioManager, ContentComparer tester, Downloader downloadManager, Database studentsRepository) {
-        super(line, data, ioManager, tester, downloadManager, studentsRepository);
+    @Inject
+    private ASynchDownloader aSynchDownloader;
+
+    public DownloadAsynchCommand(String line, String[] data) {
+        super(line, data);
 
     }
 
@@ -20,7 +26,7 @@ public class DownloadAsynchCommand extends Command {
             throw new InvalidInputException(this.getLine());
         }
         //there might be a problem
-        ASynchDownloader downloadManager = (ASynchDownloader) this.getDownloadManager();
-        downloadManager.downloadOnNewThread(data[1]);
+//        this.aSynchDownloader = (ASynchDownloader) this.getDownloadManager();
+        this.aSynchDownloader.downloadOnNewThread(data[1]);
     }
 }

@@ -1,15 +1,21 @@
 package IO.commands;
 
-import contracts.*;
+import annotations.Alias;
+import annotations.Inject;
+import contracts.Database;
+import contracts.OrderedTaker;
 import exceptions.InvalidInputException;
 
 /**
  * Created by George-Lenovo on 6/29/2017.
  */
+@Alias(value = "order")
 public class PrintOrderedStudentsCommand extends Command {
+    @Inject
+    private Database studentsRepository;
 
-    public PrintOrderedStudentsCommand(String line, String[] data, DirectoryManager ioManager, ContentComparer tester, Downloader downloadManager, Database studentsRepository) {
-        super(line, data, ioManager, tester, downloadManager, studentsRepository);
+    public PrintOrderedStudentsCommand(String line, String[] data) {
+        super(line, data);
     }
 
     @Override
@@ -21,10 +27,10 @@ public class PrintOrderedStudentsCommand extends Command {
 
         //problems might occur here
         if (data.length == 3) {
-            ((OrderedTaker) this.getStudentsRepository()).orderAndTake(data[1], data[2]);
+            ((OrderedTaker) this.studentsRepository).orderAndTake(data[1], data[2]);
         }
         if (data.length == 4) {
-            ((OrderedTaker) this.getStudentsRepository()).orderAndTake(data[1], data[2], Integer.parseInt(data[3]));
+            ((OrderedTaker) this.studentsRepository).orderAndTake(data[1], data[2], Integer.parseInt(data[3]));
         }
     }
 }

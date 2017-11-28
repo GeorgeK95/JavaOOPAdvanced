@@ -1,16 +1,22 @@
 package IO;
 
 
-import IO.commands.*;
+import annotations.Alias;
+import annotations.Inject;
 import contracts.*;
-import exceptions.InvalidInputException;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 
 /**
  * Created by George-Lenovo on 6/29/2017.
  */
 public class CommandInterpreter implements Interpreter {
+
+    private static final String COMMANDS_PATH = "src/IO/commands";
+    private static final String COMMANDS_PACKAGE = "IO.commands.";
 
     private DirectoryManager ioManager;
     private ContentComparer tester;
@@ -28,47 +34,62 @@ public class CommandInterpreter implements Interpreter {
         String[] data = line.split("\\s+");
         String commandName = data[0].toLowerCase();
         try {
-            Command command = parseCommand(line, data, commandName);
+            Executable command = parseCommand(line, data, commandName);
             command.execute();
         } catch (Throwable t) {
             OutputWriter.writeException(t.getMessage());
         }
     }
 
-    private Command parseCommand(String line, String[] data, String command) throws IOException {
-        switch (command) {
-            case "mkdir":
-                return new MakeDirectoryCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "is":
-                return new TraverseFoldersCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "cmp":
-                return new CompareFilesCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "changedirrel":
-                return new ChangeRelativePathCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "changedirabs":
-                return new ChangeAbsolutePathCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "readdb":
-                return new ReadDatabaseCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "download":
-                return new DownloadFileCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "downloadasync":
-                return new DownloadAsynchCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "open":
-                return new OpenFileCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "help":
-                return new GetHelpCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "show":
-                return new ShowCourseCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "filter":
-                return new PrintFilteredStudentsCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "order":
-                return new PrintOrderedStudentsCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "dropdb":
-                return new DropDatabaseCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
-            case "display":
-                return new DisplayCommand(line, data, this.tester, this.studentsRepository, this.downloadManager, this.ioManager);
-            default:
-                throw new InvalidInputException(line);
+    private Executable parseCommand(String line, String[] data, String command) throws IOException {
+        File commandsFolder = new File(COMMANDS_PATH);
+        Executable executable = null;
+
+        for (File file : commandsFolder.listFiles()) {
+            if (!file.isFile() || !file.getName().endsWith(".java")) {
+                continue;
+            }
+            try {
+                String className = file.getName()
+                        .substring(0, file.getName().lastIndexOf('.'));
+                Class<Executable> exeClass = (Class<Executable>) Class.forName(COMMANDS_PACKAGE + className);
+
+                if (!exeClass.isAnnotationPresent(Alias.class)) {
+                    continue;
+                }
+                Alias alias = exeClass.getAnnotation(Alias.class);
+                String value = alias.value();
+                if (!value.equalsIgnoreCase(command)) {
+                    continue;
+                }
+
+                Constructor exeCtor = exeClass.getConstructor(String.class, String[].class);
+                executable = (Executable) exeCtor.newInstance(line, data);
+                this.injectDependencies(executable, exeClass);
+            } catch (ReflectiveOperationException rfe) {
+                rfe.printStackTrace();
+            }
+        }
+
+        return executable;
+    }
+
+    private void injectDependencies(Executable executable, Class<Executable> exeClass) throws ReflectiveOperationException {
+        Field[] exeFields = exeClass.getDeclaredFields();
+        for (Field fieldToSet : exeFields) {
+            if (!fieldToSet.isAnnotationPresent(Inject.class)) {
+                continue;
+            }
+            fieldToSet.setAccessible(true);
+
+            Field[] theseFields = CommandInterpreter.class.getDeclaredFields();
+            for (Field thisField : theseFields) {
+                if (!thisField.getType().equals(fieldToSet.getType())) {
+                    continue;
+                }
+                thisField.setAccessible(true);
+                fieldToSet.set(executable, thisField.get(this));
+            }
         }
     }
 }

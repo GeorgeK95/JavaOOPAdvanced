@@ -1,5 +1,7 @@
 package c_barracksWars.contracts;
 
+import java.io.IOException;
+
 public interface Runnable {
-	void run();
+	void run() throws IOException;
 }

@@ -1,19 +1,20 @@
 package IO.commands;
 
-import contracts.ContentComparer;
-import contracts.Database;
+import annotations.Alias;
+import annotations.Inject;
 import contracts.DirectoryManager;
-import contracts.Downloader;
 import exceptions.InvalidInputException;
 
 /**
  * Created by George-Lenovo on 6/29/2017.
  */
+@Alias(value = "changeDirAbs")
 public class ChangeAbsolutePathCommand extends Command {
+    @Inject
+    private DirectoryManager ioManager;
 
-    public ChangeAbsolutePathCommand(String line, String[] data, DirectoryManager ioManager, ContentComparer tester, Downloader downloadManager, Database studentsRepository) {
-        super(line, data, ioManager, tester, downloadManager, studentsRepository);
-
+    public ChangeAbsolutePathCommand(String line, String[] data) {
+        super(line, data);
     }
 
     @Override
@@ -22,6 +23,6 @@ public class ChangeAbsolutePathCommand extends Command {
         if (data.length != 2) {
             throw new InvalidInputException(this.getLine());
         }
-        this.getIoManager().changeCurrentDirAbsolute(data[1]);
+        this.ioManager.changeCurrentDirAbsolute(data[1]);
     }
 }

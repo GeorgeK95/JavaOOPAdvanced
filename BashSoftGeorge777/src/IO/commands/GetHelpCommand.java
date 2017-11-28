@@ -1,19 +1,17 @@
 package IO.commands;
 
 import IO.OutputWriter;
-import contracts.ContentComparer;
-import contracts.Database;
-import contracts.DirectoryManager;
-import contracts.Downloader;
+import annotations.Alias;
 import exceptions.InvalidInputException;
 
 /**
  * Created by George-Lenovo on 6/29/2017.
  */
+@Alias("help")
 public class GetHelpCommand extends Command {
 
-    public GetHelpCommand(String line, String[] data, DirectoryManager ioManager, ContentComparer tester, Downloader downloadManager, Database studentsRepository) {
-        super(line, data, ioManager, tester, downloadManager, studentsRepository);
+    public GetHelpCommand(String line, String[] data) {
+        super(line, data);
     }
 
     @Override

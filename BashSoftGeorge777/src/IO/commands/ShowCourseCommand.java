@@ -1,16 +1,18 @@
 package IO.commands;
 
+import annotations.Alias;
 import contracts.*;
 import exceptions.InvalidInputException;
 
 /**
  * Created by George-Lenovo on 6/29/2017.
  */
+@Alias(value = "show")
 public class ShowCourseCommand extends Command {
+    private Database studentsRepository;
 
-    public ShowCourseCommand(String line, String[] data, DirectoryManager ioManager, ContentComparer tester, Downloader downloadManager, Database studentsRepository) {
-        super(line, data, ioManager, tester, downloadManager, studentsRepository);
-
+    public ShowCourseCommand(String line, String[] data) {
+        super(line, data);
     }
 
     @Override
@@ -22,10 +24,10 @@ public class ShowCourseCommand extends Command {
         }
         //problems eventually
         if (data.length == 2) {
-            ((Requester) this.getStudentsRepository()).getStudentsByCourse(data[1]);
+            ((Requester) this.studentsRepository).getStudentsByCourse(data[1]);
         }
         if (data.length == 3) {
-            ((Requester) this.getStudentsRepository()).getStudentMarkInCourse(data[1], data[2]);
+            ((Requester) this.studentsRepository).getStudentMarkInCourse(data[1], data[2]);
         }
     }
 }

@@ -1,7 +1,11 @@
 package IO.commands;
 
 import IO.OutputWriter;
-import contracts.*;
+import annotations.Alias;
+import annotations.Inject;
+import contracts.Course;
+import contracts.Database;
+import contracts.Student;
 import dataStructures.SimpleSortedList;
 import exceptions.InvalidInputException;
 
@@ -10,10 +14,14 @@ import java.util.Comparator;
 /**
  * Created by George-Lenovo on 6/29/2017.
  */
+@Alias(value = "display")
 public class DisplayCommand extends Command {
 
-    public DisplayCommand(String line, String[] data, ContentComparer tester, Database studentsRepository, Downloader downloadManager, DirectoryManager ioManager) {
-        super(line, data, ioManager, tester, downloadManager, studentsRepository);
+    @Inject
+    private Database repository;
+
+    public DisplayCommand(String line, String[] data) {
+        super(line, data);
     }
 
     @Override
@@ -29,14 +37,14 @@ public class DisplayCommand extends Command {
             Comparator<Student> studentComparator =
                     this.createStudentComparator(sortType);
             SimpleSortedList<Student> list =
-                    this.getStudentsRepository().getAllStudentsSorted(studentComparator);
+                    this.repository.getAllStudentsSorted(studentComparator);
             OutputWriter.writeMessageOnNewLine(
                     list.joinWith(System.lineSeparator()));
         } else if (entityToDisplay.equalsIgnoreCase("courses")) {
             Comparator<Course> courseComparator =
                     this.createCourseComparator(sortType);
             SimpleSortedList<Course> list =
-                    this.getStudentsRepository().getAllCoursesSorted(courseComparator);
+                    this.repository.getAllCoursesSorted(courseComparator);
             OutputWriter.writeMessageOnNewLine(
                     list.joinWith(System.lineSeparator()));
         } else {

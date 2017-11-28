@@ -1,22 +1,19 @@
 package IO.commands;
 
 import StaticData.SessionData;
-import contracts.ContentComparer;
-import contracts.Database;
-import contracts.DirectoryManager;
-import contracts.Downloader;
+import annotations.Alias;
 import exceptions.InvalidInputException;
 
+import java.awt.*;
 import java.io.File;
 
 /**
  * Created by George-Lenovo on 6/29/2017.
  */
+@Alias(value = "open")
 public class OpenFileCommand extends Command {
-
-
-    public OpenFileCommand(String line, String[] data, DirectoryManager ioManager, ContentComparer tester, Downloader downloadManager, Database studentsRepository) {
-        super(line, data, ioManager, tester, downloadManager, studentsRepository);
+    public OpenFileCommand(String line, String[] data) {
+        super(line, data);
     }
 
     @Override
@@ -27,6 +24,6 @@ public class OpenFileCommand extends Command {
         }
         String fullFilePath = SessionData.currentPath + "\\" + data[1];
         File f = new File(fullFilePath);
-
+        Desktop.getDesktop().open(f);
     }
 }
