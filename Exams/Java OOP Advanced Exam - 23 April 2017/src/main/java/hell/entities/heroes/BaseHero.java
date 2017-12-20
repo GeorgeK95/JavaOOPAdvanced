@@ -43,17 +43,6 @@ public abstract class BaseHero implements Hero {
         builder.append(String.format("Agility: %d", this.getAgility())).append(System.lineSeparator());
         builder.append(String.format("Intelligence: %d", this.getIntelligence())).append(System.lineSeparator());
 
-       /* builder.append("Items:");
-        Collection<Item> heroItems = this.getItems();
-        if (heroItems.isEmpty()) {
-            builder.append(" None").append(System.lineSeparator());
-        } else {
-            builder.append(System.lineSeparator());
-            for (Item item : heroItems) {
-                builder.append(item.toString());
-            }
-        }
-*/
         Collection<Item> items = this.getItems();
         if (items.isEmpty()) {
             builder.append("Items: None");
