@@ -12,7 +12,7 @@ public interface GarbageProcessor {
     StrategyHolder getStrategyHolder();
 
     /**
-     * Processes an object of Waste type, using reflection to find an appropriate strategies based on the passed in object's annotations.
+     * Processes an object of Waste type, using reflection to find an appropriate strategies based on the passed in object's testAnnotations.
      * The reflection takes the first annotation that contains the meta-annotation Disposal Annotation, which is exposed by the framework
      * and maps an appropriate strategies based on it.
      *

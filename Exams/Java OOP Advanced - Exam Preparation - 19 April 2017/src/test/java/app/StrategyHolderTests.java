@@ -1,7 +1,7 @@
 package app;
 
-import app.fakeClassesForTests.FakeDisposable;
-import app.fakeClassesForTests.FakeNonDisposable;
+import app.testAnnotations.FakeDisposable;
+import app.testAnnotations.FakeNonDisposable;
 import app.waste_disposal.DefaultStrategyHolder;
 import app.waste_disposal.contracts.GarbageDisposalStrategy;
 import app.waste_disposal.contracts.StrategyHolder;
